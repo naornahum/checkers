@@ -5,15 +5,15 @@ table {
 
 .light-cell {
   background: antiquewhite;
-  width: 2.5cm;
-  height: 2.5cm;
+  width: 75px;
+  height: 75px;
   user-select: none;
 }
 
 .dark-cell {
   background: gray;
-  width: 2.5cm;
-  height: 2.5cm;
+  width: 75px;
+  height: 75px;
   user-select: none;
 }
 
