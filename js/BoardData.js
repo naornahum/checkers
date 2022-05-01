@@ -4,14 +4,16 @@ class BoardData {
   }
 
   initPieces() {
-    // Create list of pieces (32 total)
+    // Create list of pieces (34 total)
     this.pieces = [];
 
     for (let i = 0; i < BOARD_SIZE; i++) {
-      this.pieces.push(new Piece(0, i, PIECES[i], WHITE_PLAYER));
+      this.pieces.push(new Piece(0, i + 1, PAWN, WHITE_PLAYER));
       this.pieces.push(new Piece(1, i, PAWN, WHITE_PLAYER));
-      this.pieces.push(new Piece(6, i, PAWN, BLACK_PLAYER));
-      this.pieces.push(new Piece(7, i, PIECES[i], BLACK_PLAYER));
+      this.pieces.push(new Piece(2, i + 1, PAWN, WHITE_PLAYER));
+      this.pieces.push(new Piece(5, i, PAWN, BLACK_PLAYER));
+      this.pieces.push(new Piece(6, i + 1, PAWN, BLACK_PLAYER));
+      this.pieces.push(new Piece(7, i, PAWN, BLACK_PLAYER));
     }
   }
 

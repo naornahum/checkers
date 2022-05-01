@@ -1,6 +1,7 @@
 table {
   position: relative;
   margin: auto;
+  outline: 2px solid black;
 }
 
 .light-cell {
@@ -39,5 +40,5 @@ table {
 .title {
   text-align: center;
   color: grey;
-  text-decoration: underline;
+  font-family: 'Roboto Mono', monospace;
 }

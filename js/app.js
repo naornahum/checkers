@@ -3,13 +3,14 @@ const WHITE_PLAYER = "white";
 const BLACK_PLAYER = "black";
 
 const PAWN = "pawn";
-const ROOK = "rook";
-const KNIGHT = "knight";
-const BISHOP = "bishop";
-const KING = "king";
+// const ROOK = "rook";
+// const KNIGHT = "knight";
+// const BISHOP = "bishop";
+// const KING = "king";
 const QUEEN = "queen";
 
-const PIECES = [ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK];
+// const PIECES = [ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK];
+const PIECES = [PAWN, QUEEN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN];
 
 const CHECKERS_BOARD_ID = "checkers-board";
 
@@ -91,7 +92,6 @@ function createCheckersBoard(boardData) {
 
   if (game.winner !== undefined) {
     const winnerPopup = document.createElement("div");
-    // black -> B + lack -> Black
     const winner = game.winner.charAt(0).toUpperCase() + game.winner.slice(1);
     winnerPopup.textContent = winner + " player wins!";
     winnerPopup.classList.add("winner-dialog");
