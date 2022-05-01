@@ -2,6 +2,9 @@ const BOARD_SIZE = 8;
 const WHITE_PLAYER = "white";
 const BLACK_PLAYER = "black";
 
+const WHITE_MOVE_DIRECTION = 1;
+const BLACK_MOVE_DIRECTION = -1;
+
 const PAWN = "pawn";
 const QUEEN = "queen";
 const CHECKERS_BOARD_ID = "checkers-board";
@@ -21,8 +24,16 @@ function tryUpdateSelectedPiece(row, col) {
 
   // Show possible moves
   const piece = game.boardData.getPiece(row, col);
+
+  const direction =
+    game.currentPlayer === WHITE_PLAYER
+      ? WHITE_MOVE_DIRECTION
+      : BLACK_MOVE_DIRECTION;
   if (piece !== undefined) {
-    let possibleMoves = game.getPossibleMoves(piece);
+    possibleMoves = [
+      [piece.row + direction, piece.col + 1],
+      [piece.row + direction, piece.col - 1],
+    ];
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add("possible-move");

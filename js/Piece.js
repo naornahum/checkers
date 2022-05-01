@@ -18,14 +18,6 @@ class Piece {
     let moves;
     if (this.type === PAWN) {
       moves = this.getPawnMoves(boardData);
-      // } else if (this.type === ROOK) {
-      //   moves = this.getRookMoves(boardData);
-      // } else if (this.type === KNIGHT) {
-      //   moves = this.getKnightMoves(boardData);
-      // } else if (this.type === BISHOP) {
-      //   moves = this.getBishopMoves(boardData);
-      // } else if (this.type === KING) {
-      //   moves = this.getKingMoves(boardData);
     } else if (this.type === QUEEN) {
       moves = this.getQueenMoves(boardData);
     } else {
@@ -83,37 +75,6 @@ class Piece {
     return result;
   }
 
-  // getPawnMoves(boardData) {
-  //   let result = [];
-  //   const relativeMoves = [
-  //     [-1, -1],
-  //     // [-1, 0],
-  //     [-1, 1],
-  //     // [0, -1],
-  //     // [0, 1],
-  //     [1, -1],
-  //     // [1, 0],
-  //     [1, 1],
-  //   ];
-  //   for (let relativeMove of relativeMoves) {
-  //     let row = this.row + relativeMove[0];
-  //     let col = this.col + relativeMove[1];
-  //     if (!boardData.isPlayer(row, col, this.player)) {
-  //       result.push([row, col]);
-  //     }
-  //   }
-  //   return result;
-  // }
-
-  // getRookMoves(boardData) {
-  //   let result = [];
-  //   result = result.concat(this.getMovesInDirection(-1, 0, boardData));
-  //   result = result.concat(this.getMovesInDirection(1, 0, boardData));
-  //   result = result.concat(this.getMovesInDirection(0, -1, boardData));
-  //   result = result.concat(this.getMovesInDirection(0, 1, boardData));
-  //   return result;
-  // }
-
   getMovesInDirection(directionRow, directionCol, boardData) {
     let result = [];
 
@@ -131,55 +92,4 @@ class Piece {
     }
     return result;
   }
-
-  // getKnightMoves(boardData) {
-  //   let result = [];
-  //   const relativeMoves = [
-  //     [2, 1],
-  //     [2, -1],
-  //     [-2, 1],
-  //     [-2, -1],
-  //     [-1, 2],
-  //     [1, 2],
-  //     [-1, -2],
-  //     [1, -2],
-  //   ];
-  //   for (let relativeMove of relativeMoves) {
-  //     let row = this.row + relativeMove[0];
-  //     let col = this.col + relativeMove[1];
-  //     if (!boardData.isPlayer(row, col, this.player)) {
-  //       result.push([row, col]);
-  //     }
-  //   }
-  //   return result;
-  // }
-
-  // getBishopMoves(boardData) {
-  //   let result = [];
-  //   result = result.concat(this.getMovesInDirection(-1, -1, boardData));
-  //   result = result.concat(this.getMovesInDirection(-1, 1, boardData));
-  //   result = result.concat(this.getMovesInDirection(1, -1, boardData));
-  //   result = result.concat(this.getMovesInDirection(1, 1, boardData));
-  //   return result;
-  // }
-
-  //   getQueenMoves(boardData) {
-  //     let result = this.getBishopMoves(boardData);
-  //     result = result.concat(this.getRookMoves(boardData));
-  //     return result;
-  //   }
-  // }
-
-  //   getQueenMoves(boardData) {
-  //     let result = [];
-  //     result = result.concat(this.getMovesInDirection(-1, -1, boardData));
-  //     result = result.concat(this.getMovesInDirection(-1, 1, boardData));
-  //     result = result.concat(this.getMovesInDirection(1, -1, boardData));
-  //     result = result.concat(this.getMovesInDirection(1, 1, boardData));
-  //     result = result.concat(this.getMovesInDirection(-1, 0, boardData));
-  //     result = result.concat(this.getMovesInDirection(1, 0, boardData));
-  //     result = result.concat(this.getMovesInDirection(0, -1, boardData));
-  //     result = result.concat(this.getMovesInDirection(0, 1, boardData));
-  //     return result;
-  //   }
 }
