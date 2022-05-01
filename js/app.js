@@ -3,15 +3,7 @@ const WHITE_PLAYER = "white";
 const BLACK_PLAYER = "black";
 
 const PAWN = "pawn";
-// const ROOK = "rook";
-// const KNIGHT = "knight";
-// const BISHOP = "bishop";
-// const KING = "king";
 const QUEEN = "queen";
-
-// const PIECES = [ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK];
-const PIECES = [PAWN, QUEEN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN];
-
 const CHECKERS_BOARD_ID = "checkers-board";
 
 let game;
@@ -63,6 +55,7 @@ function addImage(cell, player, name) {
 
 function createCheckersBoard(boardData) {
   table = document.getElementById(CHECKERS_BOARD_ID);
+
   if (table !== null) {
     table.remove();
   }

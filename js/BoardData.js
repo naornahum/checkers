@@ -8,12 +8,23 @@ class BoardData {
     this.pieces = [];
 
     for (let i = 0; i < BOARD_SIZE; i++) {
-      this.pieces.push(new Piece(0, i + 1, PAWN, WHITE_PLAYER));
-      this.pieces.push(new Piece(1, i, PAWN, WHITE_PLAYER));
-      this.pieces.push(new Piece(2, i + 1, PAWN, WHITE_PLAYER));
-      this.pieces.push(new Piece(5, i, PAWN, BLACK_PLAYER));
-      this.pieces.push(new Piece(6, i + 1, PAWN, BLACK_PLAYER));
-      this.pieces.push(new Piece(7, i, PAWN, BLACK_PLAYER));
+      for (let j = 0; j < BOARD_SIZE; j++) {
+        if ((i == 0 || i == 2) && j % 2 == 1) {
+          this.pieces.push(new Piece(i, j, PAWN, WHITE_PLAYER));
+        }
+
+        if (i == 1 && j % 2 == 0) {
+          this.pieces.push(new Piece(i, j, PAWN, WHITE_PLAYER));
+        }
+
+        if ((i == 5 || i == 7) && j % 2 == 0) {
+          this.pieces.push(new Piece(i, j, PAWN, BLACK_PLAYER));
+        }
+
+        if (i == 6 && j % 2 == 1) {
+          this.pieces.push(new Piece(i, j, PAWN, BLACK_PLAYER));
+        }
+      }
     }
   }
 
