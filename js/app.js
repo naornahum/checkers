@@ -25,15 +25,8 @@ function tryUpdateSelectedPiece(row, col) {
   // Show possible moves
   const piece = game.boardData.getPiece(row, col);
 
-  const direction =
-    game.currentPlayer === WHITE_PLAYER
-      ? WHITE_MOVE_DIRECTION
-      : BLACK_MOVE_DIRECTION;
   if (piece !== undefined) {
-    possibleMoves = [
-      [piece.row + direction, piece.col + 1],
-      [piece.row + direction, piece.col - 1],
-    ];
+    possibleMoves = game.getPossibleMoves(piece);
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add("possible-move");

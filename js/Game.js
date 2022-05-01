@@ -13,13 +13,9 @@ class Game {
       // possibleMove looks like this: [1,2]
       if (possibleMove[0] === row && possibleMove[1] === col) {
         // There is a legal move
-        const removedPiece = this.boardData.removePiece(row, col);
+        this.boardData.removePiece(row, col);
         piece.row = row;
         piece.col = col;
-        if (removedPiece !== undefined && removedPiece.type === KING) {
-          this.winner = piece.player;
-        }
-
         this.currentPlayer = piece.getOpponent();
         return true;
       }
@@ -27,10 +23,21 @@ class Game {
     return false;
   }
 
+  // TODO: queen move, if we reached end of the board, check if we on edge
   getPossibleMoves(piece) {
-    if (this.currentPlayer !== piece.player || this.winner !== undefined) {
-      return [];
+    // in version 14+ on node ? checks first if piece is defined before checking if player is presented
+    if (piece?.player === this.currentPlayer) {
+      let direction = WHITE_MOVE_DIRECTION;
+      if (this.currentPlayer === BLACK_PLAYER) {
+        direction = BLACK_MOVE_DIRECTION;
+      }
+
+      return [
+        [piece.row + direction, piece.col + 1],
+        [piece.row + direction, piece.col - 1],
+      ];
     }
-    return piece.getPossibleMoves(this.boardData);
+
+    return [];
   }
 }
