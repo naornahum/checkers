@@ -14,6 +14,14 @@ class Game {
       if (possibleMove[0] === row && possibleMove[1] === col) {
         // There is a legal move
         this.boardData.removePiece(row, col);
+        if (Math.abs(piece.row - row) === 2) {
+          const rowToRemove = piece.row + (row - piece.row) / 2;
+
+          const colToRemove = piece.col + (col - piece.col) / 2;
+
+          this.boardData.removePiece(rowToRemove, colToRemove);
+        }
+
         piece.row = row;
         piece.col = col;
         this.currentPlayer = piece.getOpponent();
@@ -25,6 +33,7 @@ class Game {
 
   // TODO: queen move, if we reached end of the board, check if we on edge
   getPossibleMoves(piece) {
+    const moves = [];
     // in version 14+ on node ? checks first if piece is defined before checking if player is presented
     if (piece?.player === this.currentPlayer) {
       let direction = WHITE_MOVE_DIRECTION;
@@ -32,12 +41,36 @@ class Game {
         direction = BLACK_MOVE_DIRECTION;
       }
 
-      return [
-        [piece.row + direction, piece.col + 1],
-        [piece.row + direction, piece.col - 1],
-      ];
-    }
+      if (!this.isPieceBlocked(piece.row + direction, piece.col + 1)) {
+        moves.push([piece.row + direction, piece.col + 1]);
+      } else if (
+        !this.isPieceBlocked(piece.row + 2 * direction, piece.col + 2) &&
+        !this.isPieceAllay(
+          this.boardData.getPiece(piece.row + direction, piece.col + 1)
+        )
+      ) {
+        moves.push([piece.row + 2 * direction, piece.col + 2]);
+      }
 
-    return [];
+      if (!this.isPieceBlocked(piece.row + direction, piece.col - 1)) {
+        moves.push([piece.row + direction, piece.col - 1]);
+      } else if (
+        !this.isPieceBlocked(piece.row + 2 * direction, piece.col - 2) &&
+        !this.isPieceAllay(
+          this.boardData.getPiece(piece.row + direction, piece.col - 1)
+        )
+      ) {
+        moves.push([piece.row + 2 * direction, piece.col - 2]);
+      }
+    }
+    return moves;
+  }
+
+  isPieceBlocked(row, col) {
+    return this.boardData.getPiece(row, col) !== undefined;
+  }
+
+  isPieceAllay(piece) {
+    return piece.player === this.currentPlayer;
   }
 }
