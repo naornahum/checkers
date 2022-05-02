@@ -50,6 +50,7 @@ class Piece {
     return result;
   }
 
+  // getPawnMoves
   getPawnMoves(boardData) {
     let result = [];
     let direction = 1;

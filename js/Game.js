@@ -34,7 +34,7 @@ class Game {
   // TODO: queen move, if we reached end of the board, check if we on edge
   getPossibleMoves(piece) {
     const moves = [];
-    // in version 14+ on node ? checks first if piece is defined before checking if player is presented
+    // In version 14+ on node ? checks first if piece is defined before checking if player is presented
     if (piece?.player === this.currentPlayer) {
       let direction = WHITE_MOVE_DIRECTION;
       if (this.currentPlayer === BLACK_PLAYER) {

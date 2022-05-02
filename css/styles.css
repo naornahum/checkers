@@ -1,5 +1,6 @@
 body{
   background-color: rgb(54, 49, 49);
+  height: 100%;
 }
 
 table {
@@ -41,14 +42,16 @@ table {
   width: max-content;
 }
 
-h1, h3 {
+h1, h2{
   text-align: center;
   color: grey;
   font-family: 'Roboto Mono', monospace;
 }
 
-h2 {
-  text-align: center;
+h3 {
   color: grey;
   font-family: 'Roboto Mono', monospace;
+  position: absolute;
+  bottom: 0;
+  right: 45.5%;
 }

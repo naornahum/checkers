@@ -57,6 +57,7 @@ function addImage(cell, player, name) {
   cell.appendChild(image);
 }
 
+// Initialize the board
 function createCheckersBoard(boardData) {
   table = document.getElementById(CHECKERS_BOARD_ID);
 
@@ -101,16 +102,12 @@ function initGame() {
   createCheckersBoard(game.boardData);
 }
 
-//Head
+// Head + Intro
 window.addEventListener("load", (event) => {
   let head1 = document.createElement("h1");
   head1.textContent = "Checkers Game";
   let Body1 = document.body;
   Body1.appendChild(head1);
-});
-
-//Intro
-window.addEventListener("load", (event) => {
   let head2 = document.createElement("h2");
   head2.textContent =
     "Checkers, also called draughts, board game, one of the world's oldest games. Checkers is played by two persons who oppose each other across a board of 64 light and dark squares, the same as a chessboard.";
@@ -118,10 +115,10 @@ window.addEventListener("load", (event) => {
   Body2.appendChild(head2);
 });
 
-//Board
+// Board
 window.addEventListener("load", initGame);
 
-//Credit
+// Credit
 window.addEventListener("load", (event) => {
   let head3 = document.createElement("h3");
   head3.textContent = "© 2022 Naor Nahum";
