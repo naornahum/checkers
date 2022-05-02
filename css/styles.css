@@ -1,6 +1,5 @@
 body{
   background-color: rgb(54, 49, 49);
-  height: 100%;
 }
 
 table {
@@ -27,10 +26,6 @@ table {
   background: limegreen;
 }
 
-.possible-move {
-  background: orange;
-}
-
 .winner-dialog {
   position: absolute;
   left: 50%;
@@ -54,4 +49,21 @@ h3 {
   position: absolute;
   bottom: 0;
   right: 45.5%;
+}
+
+/* *********************************************** */
+.active {
+  cursor: pointer;
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+.possible-move {
+  background-color: orange;
+}
+
+.selected-piece {
+  box-shadow: 0px 0px 22px 5px rgba(0,0,0,0.75);
 }

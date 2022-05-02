@@ -13,6 +13,9 @@ let game;
 let table;
 let selectedPiece;
 
+let WHITE_PIECES;
+let BLACK_PIECES;
+
 function tryUpdateSelectedPiece(row, col) {
   // Clear all previous possible moves
   for (let i = 0; i < BOARD_SIZE; i++) {
@@ -97,9 +100,272 @@ function createCheckersBoard(boardData) {
   }
 }
 
+// ************************************************************************************
+
+function isEmpty(div) {
+  return (
+    !div.classList.contains(BLACK_PLAYER) &&
+    !div.classList.contains(WHITE_PLAYER)
+  );
+}
+
+function resetPieceHolder(div) {
+  div.classList.remove(...div.classList);
+  div.innerHTML = "";
+}
+
+function changeTurn(color) {
+  blacks = document.querySelectorAll(".black");
+
+  whites = document.querySelectorAll(".white");
+
+  //Remove or add the disabled class, depending on which color just played.
+  if (color === WHITE_PLAYER) {
+    for (whitePiece of whites) {
+      whitePiece.classList.add("disabled");
+      whitePiece.addEventListener("click", onPieceClicked);
+    }
+
+    for (blackPiece of blacks) {
+      blackPiece.classList.remove("disabled");
+      blackPiece.classList.add("active");
+      blackPiece.addEventListener("click", onPieceClicked);
+    }
+  } else {
+    for (whitePiece of whites) {
+      whitePiece.classList.remove("disabled");
+      whitePiece.classList.add("active");
+      whitePiece.addEventListener("click", onPieceClicked);
+    }
+
+    for (blackPiece of blacks) {
+      blackPiece.classList.add("disabled");
+      blackPiece.addEventListener("click", onPieceClicked);
+    }
+  }
+}
+
+function addImageNew(pieceHolder, player, name) {
+  const image = document.createElement("img");
+  image.src = "images/" + player + "/" + name + ".png";
+  image.draggable = false;
+  pieceHolder.appendChild(image);
+}
+
+function getPossibleMoves(color, row, cell) {
+  const moves = [];
+
+  if (color === WHITE_PLAYER) {
+    const opt1 = document.querySelector(
+      `tr:nth-of-type(${row + 2}) td:nth-of-type(${cell}) div`
+    );
+
+    const opt2 = document.querySelector(
+      `tr:nth-of-type(${row + 2}) td:nth-of-type(${cell + 2}) div`
+    );
+
+    if (opt1 && isEmpty(opt1)) {
+      moves.push({
+        position: opt1.parentElement,
+        eat: { state: false, pos: null },
+      });
+    } else if (opt1 && opt1.classList.contains(BLACK_PLAYER)) {
+      const next = document.querySelector(
+        `tr:nth-of-type(${row + 3}) td:nth-of-type(${cell - 1}) div`
+      );
+      if (isEmpty(next)) {
+        moves.push({
+          position: next.parentElement,
+          eat: {
+            state: true,
+            pos: opt1,
+          },
+        });
+      }
+    }
+
+    if (opt2 && isEmpty(opt2)) {
+      moves.push({
+        position: opt2.parentElement,
+        eat: { state: false, pos: null },
+      });
+    } else if (opt2 && opt2.classList.contains(BLACK_PLAYER)) {
+      const next = document.querySelector(
+        `tr:nth-of-type(${row - 1}) td:nth-of-type(${cell + 3}) div`
+      );
+
+      if (isEmpty(next)) {
+        moves.push({
+          position: next.parentElement,
+          eat: {
+            state: true,
+            pos: opt2,
+          },
+        });
+      }
+    }
+  } else {
+    const opt1 = document.querySelector(
+      `tr:nth-of-type(${row}) td:nth-of-type(${cell}) div`
+    );
+
+    const opt2 = document.querySelector(
+      `tr:nth-of-type(${row}) td:nth-of-type(${cell + 2}) div`
+    );
+
+    if (opt1 && isEmpty(opt1)) {
+      moves.push({
+        position: opt1.parentElement,
+        eat: { state: false, pos: null },
+      });
+    } else if (opt1 && opt1.classList.contains(WHITE_PLAYER)) {
+      const next = document.querySelector(
+        `tr:nth-of-type(${row - 1}) td:nth-of-type(${cell - 1}) div`
+      );
+
+      if (isEmpty(next)) {
+        moves.push({
+          position: next.parentElement,
+          eat: {
+            state: true,
+            pos: opt1,
+          },
+        });
+      }
+    }
+
+    if (opt2 && isEmpty(opt2)) {
+      moves.push({
+        position: opt2.parentElement,
+        eat: { state: false, pos: null },
+      });
+    } else if (opt2 && opt2.classList.contains(WHITE_PLAYER)) {
+      const next = document.querySelector(
+        `tr:nth-of-type(${row + 3}) td:nth-of-type(${cell + 3}) div`
+      );
+
+      if (isEmpty(next)) {
+        moves.push({
+          position: next.parentElement,
+          eat: {
+            state: true,
+            pos: opt2,
+          },
+        });
+      }
+    }
+  }
+
+  return moves;
+}
+
+function onMoveEvent(event, prevPos, otherOptions, color, eat) {
+  event.target.classList.remove("possible-move");
+  event.target.onclick = null;
+
+  //Remove the previous position
+  // prevPos
+  prevPos.parentElement.classList.remove(...prevPos.parentElement.classList);
+  prevPos.parentElement.innerHTML = "";
+  // prevPos.parentElement.onclick = null;
+
+  for (option of otherOptions) {
+    if (option.position.classList.contains("possible-move")) {
+      option.position.classList.remove("possible-move");
+      option.position.onclick = null;
+    }
+  }
+
+  if (eat.state) {
+    resetPieceHolder(eat.pos);
+  }
+
+  addImageNew(event.target.firstChild, color, PAWN);
+  event.target.firstChild.classList.add(color);
+  changeTurn(color);
+}
+
+function onPieceClicked(event) {
+  event.target.classList.toggle("selected-piece");
+
+  const color = event.target.src.includes("white")
+    ? WHITE_PLAYER
+    : BLACK_PLAYER;
+
+  if (color === WHITE_PLAYER) {
+    whites = document.querySelectorAll(".white");
+    for (whitePiece of whites) {
+      whitePiece.classList.toggle("disabled");
+    }
+  } else {
+    blacks = document.querySelectorAll(".black");
+    for (blackPiece of blacks) {
+      blackPiece.classList.toggle("disabled");
+    }
+  }
+  event.target.parentElement.classList.toggle("disabled");
+
+  let cell = event.path[2].cellIndex;
+  let row = event.path[3].rowIndex;
+
+  const moves = getPossibleMoves(color, row, cell);
+
+  for (move of moves) {
+    // if true Clean prev moves
+    // else show current moves
+    if (move.position.classList.contains("possible-move")) {
+      move.position.classList.remove("possible-move");
+    } else {
+      move.position.classList.add("possible-move");
+      const eat = move.eat;
+      move.position.onclick = (moveEvent) => {
+        onMoveEvent(moveEvent, event.target, moves, color, eat);
+      };
+    }
+  }
+}
+
+function createCheckersBoardNew() {
+  table = document.getElementById(CHECKERS_BOARD_ID);
+
+  // Create empty checkers board HTML:
+  table = document.createElement("table");
+  table.id = CHECKERS_BOARD_ID;
+  document.body.appendChild(table);
+
+  for (let row = 0; row < BOARD_SIZE; row++) {
+    const rowElement = table.insertRow();
+    for (let col = 0; col < BOARD_SIZE; col++) {
+      const cell = rowElement.insertCell();
+      if ((row + col) % 2 === 0) {
+        cell.innerHTML = "<div></div>";
+        cell.className = "dark-cell";
+      } else {
+        cell.className = "light-cell";
+      }
+    }
+  }
+
+  whites = document.querySelectorAll("tr:nth-child(-n+3) div");
+  blacks = document.querySelectorAll("tr:nth-child(n+6) div");
+
+  for (whitePiece of whites) {
+    addImageNew(whitePiece, WHITE_PLAYER, PAWN);
+    whitePiece.classList.add("active", WHITE_PLAYER);
+    whitePiece.addEventListener("click", onPieceClicked);
+  }
+
+  for (blackPiece of blacks) {
+    addImageNew(blackPiece, BLACK_PLAYER, PAWN);
+    blackPiece.classList.add("disabled", BLACK_PLAYER);
+    blackPiece.addEventListener("click", onPieceClicked);
+  }
+}
+
 function initGame() {
-  game = new Game(WHITE_PLAYER);
-  createCheckersBoard(game.boardData);
+  //game = new Game(WHITE_PLAYER);
+  //createCheckersBoard(game.boardData);
+  createCheckersBoardNew();
 }
 
 // Head + Intro
