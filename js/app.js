@@ -261,6 +261,15 @@ function getPossibleMoves(color, row, cell) {
     }
   }
 
+  // Convert to boolean
+  const isContainEat = moves.find((x) => x.eat.state === true);
+
+  // If moves contain eat moves reutn only eat moves
+  if (isContainEat) {
+    return moves.filter((x) => x.eat.state === true);
+  }
+
+  // Return all moves
   return moves;
 }
 
@@ -268,7 +277,7 @@ function onMoveEvent(event, prevPos, otherOptions, color, eat) {
   event.target.classList.remove("possible-move");
   event.target.onclick = null;
 
-  //Remove the previous position
+  // Remove the previous position
   // prevPos
   prevPos.parentElement.classList.remove(...prevPos.parentElement.classList);
   prevPos.parentElement.innerHTML = "";
