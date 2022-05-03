@@ -2,16 +2,28 @@ const BOARD_SIZE = 8;
 const WHITE_PLAYER = "white";
 const BLACK_PLAYER = "black";
 
-const WHITE_MOVE_DIRECTION = 1;
-const BLACK_MOVE_DIRECTION = -1;
+const DIRECTIONS = [
+  {
+    nextRow: 1,
+    nextCell: -1,
+  },
+  {
+    nextRow: 1,
+    nextCell: 1,
+  },
+  {
+    nextRow: -1,
+    nextCell: -1,
+  },
+  {
+    nextRow: -1,
+    nextCell: 1,
+  },
+];
 
 const PAWN = "pawn";
 const QUEEN = "queen";
 const CHECKERS_BOARD_ID = "checkers-board";
-
-let game;
-let table;
-let selectedPiece;
 
 // Checkes if a cell is empty
 function isEmpty(div) {
@@ -71,6 +83,34 @@ function getPossibleMoves(color, row, cell) {
   const moves = [];
   const realRow = row + 1;
   const realCell = cell + 1;
+
+  // if (isQueen) {
+  //   for (direction of DIRECTIONS) {
+  //     let i = 1;
+  //     while (
+  //       realRow + i * direction.nextRow > 0 &&
+  //       realRow + i * direction.nextRow < 9 &&
+  //       realCell + i * direction.nextCell > 0 &&
+  //       realCell + i * direction.nextCell < 9
+  //     ) {
+  //       const cellToMove = document.querySelector(
+  //         `tr:nth-of-type(${realRow + i * direction.nextRow}) td:nth-of-type(${
+  //           realCell + i * direction.nextCell
+  //         }) div`
+  //       );
+  //       i++;
+
+  //       cellToMove &&
+  //         isEmpty(cellToMove) &&
+  //         moves.push({
+  //           position: cellToMove.parentElement,
+  //           eat: { state: false, pos: null },
+  //         });
+  //     }
+  //   }
+
+  //   return moves;
+  // }
 
   if (color === WHITE_PLAYER) {
     const rightMove = document.querySelector(
@@ -214,12 +254,15 @@ function onMoveEvent(posToMove, prevPosDiv, allMoves, color, eat) {
 
   const row = posToMove.path[1].rowIndex;
 
-  if (row === 0 || row === 7) {
-    addImage(posToMove.target.firstChild, color, QUEEN);
-    posToMove.target.firstChild.classList.add(QUEEN);
-  } else {
-    addImage(posToMove.target.firstChild, color, PAWN);
-  }
+  // Transform normal so queen
+  // if (row === 0 || row === 7) {
+  //   addImage(posToMove.target.firstChild, color, QUEEN);
+  //   posToMove.target.firstChild.classList.add(QUEEN);
+  // } else {
+  //   addImage(posToMove.target.firstChild, color, PAWN);
+  // }
+
+  addImage(posToMove.target.firstChild, color, PAWN);
 
   posToMove.target.firstChild.classList.add(color);
   changeTurn(color);
@@ -248,7 +291,7 @@ function onPieceClicked(event) {
   let cell = event.path[1].cellIndex;
   let row = event.path[2].rowIndex;
 
-  const isQueen = event.path[1].classList.contains(QUEEN);
+  // const isQueen = event.path[0].classList.contains(QUEEN);
   const moves = getPossibleMoves(color, row, cell, isQueen);
 
   for (move of moves) {
@@ -268,7 +311,7 @@ function onPieceClicked(event) {
 
 // Creates empty checkers board HTML:
 function createCheckersBoard() {
-  table = document.getElementById(CHECKERS_BOARD_ID);
+  let table = document.getElementById(CHECKERS_BOARD_ID);
 
   // Create empty checkers board HTML:
   table = document.createElement("table");
