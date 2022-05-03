@@ -13,9 +13,6 @@ let game;
 let table;
 let selectedPiece;
 
-let WHITE_PIECES;
-let BLACK_PIECES;
-
 // Checkes if a cell is empty
 function isEmpty(div) {
   return (
@@ -35,27 +32,27 @@ function changeTurn(color) {
   blacks = document.querySelectorAll(".black");
   whites = document.querySelectorAll(".white");
 
-  //Remove or add the disabled class, depending on which color just played
+  //Remove or add the unclickable class, depending on which color just played
   if (color === WHITE_PLAYER) {
     for (whitePiece of whites) {
-      whitePiece.classList.add("disabled");
+      whitePiece.classList.add("unclickable");
       whitePiece.addEventListener("click", onPieceClicked);
     }
 
     for (blackPiece of blacks) {
-      blackPiece.classList.remove("disabled");
+      blackPiece.classList.remove("unclickable");
       blackPiece.classList.add("active");
       blackPiece.addEventListener("click", onPieceClicked);
     }
   } else {
     for (whitePiece of whites) {
-      whitePiece.classList.remove("disabled");
+      whitePiece.classList.remove("unclickable");
       whitePiece.classList.add("active");
       whitePiece.addEventListener("click", onPieceClicked);
     }
 
     for (blackPiece of blacks) {
-      blackPiece.classList.add("disabled");
+      blackPiece.classList.add("unclickable");
       blackPiece.addEventListener("click", onPieceClicked);
     }
   }
@@ -66,6 +63,7 @@ function addImage(pieceHolder, player, name) {
   const image = document.createElement("img");
   image.src = "images/" + player + "/" + name + ".png";
   image.draggable = false;
+  image.className = "unclickable";
   pieceHolder.appendChild(image);
 }
 
@@ -187,26 +185,23 @@ function getPossibleMoves(color, row, cell) {
   return moves;
 }
 
-function onMoveEvent(event, prevPos, otherOptions, color, eat) {
-  event.target.classList.remove("possible-move");
-  event.target.onclick = null;
+function onMoveEvent(posToMove, prevPosDiv, allMoves, color, eat) {
+  posToMove.target.classList.remove("possible-move");
+  posToMove.target.onclick = null;
 
-  // Remove the previous position
-  // prevPos
-  prevPos.parentElement.classList.remove(...prevPos.parentElement.classList);
-  prevPos.parentElement.innerHTML = "";
-  // prevPos.parentElement.onclick = null;
+  // Reset the previous div
+  resetPieceHolder(prevPosDiv);
 
-  for (option of otherOptions) {
-    if (option.position.classList.contains("possible-move")) {
-      option.position.classList.remove("possible-move");
-      option.position.onclick = null;
+  // Clean all moves
+  for (move of allMoves) {
+    if (move.position.classList.contains("possible-move")) {
+      move.position.classList.remove("possible-move");
+      move.position.onclick = null;
     }
   }
 
   if (eat.state) {
     resetPieceHolder(eat.pos);
-
     const isWhite = color === WHITE_PLAYER;
     pieces = document.querySelectorAll(
       `.${isWhite ? BLACK_PLAYER : WHITE_PLAYER}`
@@ -217,35 +212,44 @@ function onMoveEvent(event, prevPos, otherOptions, color, eat) {
     }
   }
 
-  addImage(event.target.firstChild, color, PAWN);
-  event.target.firstChild.classList.add(color);
+  const row = posToMove.path[1].rowIndex;
+
+  if (row === 0 || row === 7) {
+    addImage(posToMove.target.firstChild, color, QUEEN);
+    posToMove.target.firstChild.classList.add(QUEEN);
+  } else {
+    addImage(posToMove.target.firstChild, color, PAWN);
+  }
+
+  posToMove.target.firstChild.classList.add(color);
   changeTurn(color);
 }
 
 function onPieceClicked(event) {
   event.target.classList.toggle("selected-piece");
 
-  const color = event.target.src.includes("white")
+  const color = event.target.classList.contains(WHITE_PLAYER)
     ? WHITE_PLAYER
     : BLACK_PLAYER;
 
   if (color === WHITE_PLAYER) {
     whites = document.querySelectorAll(".white");
     for (whitePiece of whites) {
-      whitePiece.classList.toggle("disabled");
+      whitePiece.classList.toggle("unclickable");
     }
   } else {
     blacks = document.querySelectorAll(".black");
     for (blackPiece of blacks) {
-      blackPiece.classList.toggle("disabled");
+      blackPiece.classList.toggle("unclickable");
     }
   }
-  event.target.parentElement.classList.toggle("disabled");
+  event.target.classList.toggle("unclickable");
 
-  let cell = event.path[2].cellIndex;
-  let row = event.path[3].rowIndex;
+  let cell = event.path[1].cellIndex;
+  let row = event.path[2].rowIndex;
 
-  const moves = getPossibleMoves(color, row, cell);
+  const isQueen = event.path[1].classList.contains(QUEEN);
+  const moves = getPossibleMoves(color, row, cell, isQueen);
 
   for (move of moves) {
     // if true Clean prev moves
@@ -284,18 +288,19 @@ function createCheckersBoard() {
     }
   }
 
-  whites = document.querySelectorAll("tr:nth-child(-n+3) div");
-  blacks = document.querySelectorAll("tr:nth-child(n+6) div");
+  // Select the 3 bottom rows and top 3 raw to init withe piecs
+  let whiteDivs = document.querySelectorAll("tr:nth-child(-n+1) div");
+  let blackDivs = document.querySelectorAll("tr:nth-child(n+8) div");
 
-  for (whitePiece of whites) {
+  for (whitePiece of whiteDivs) {
     addImage(whitePiece, WHITE_PLAYER, PAWN);
     whitePiece.classList.add("active", WHITE_PLAYER);
     whitePiece.addEventListener("click", onPieceClicked);
   }
 
-  for (blackPiece of blacks) {
+  for (blackPiece of blackDivs) {
     addImage(blackPiece, BLACK_PLAYER, PAWN);
-    blackPiece.classList.add("disabled", BLACK_PLAYER);
+    blackPiece.classList.add("unclickable", BLACK_PLAYER);
     blackPiece.addEventListener("click", onPieceClicked);
   }
 }

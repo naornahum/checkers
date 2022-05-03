@@ -56,7 +56,7 @@ h3 {
   cursor: pointer;
 }
 
-.disabled {
+.unclickable {
   pointer-events: none;
 }
 
