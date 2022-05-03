@@ -1,44 +1,14 @@
-const BOARD_SIZE = 8;
-const WHITE_PLAYER = "white";
-const BLACK_PLAYER = "black";
-
-const DIRECTIONS = [
-  {
-    nextRow: 1,
-    nextCell: -1,
-  },
-  {
-    nextRow: 1,
-    nextCell: 1,
-  },
-  {
-    nextRow: -1,
-    nextCell: -1,
-  },
-  {
-    nextRow: -1,
-    nextCell: 1,
-  },
-];
-
-const PAWN = "pawn";
-const QUEEN = "queen";
-const CHECKERS_BOARD_ID = "checkers-board";
-
 let table;
 
-// Checkes if a cell is empty
-function isEmpty(div) {
-  return (
-    !div.classList.contains(BLACK_PLAYER) &&
-    !div.classList.contains(WHITE_PLAYER)
-  );
+function disablePiece(piece) {
+  piece.classList.add("unclickable");
+  piece.addEventListener("click", onPieceClicked);
 }
 
-// Delete the class from the cell => Removing a captured piece
-function resetPieceHolder(div) {
-  div.classList.remove(...div.classList);
-  div.innerHTML = "";
+function activatePiece(piece) {
+  piece.classList.remove("unclickable");
+  piece.classList.add("active");
+  piece.addEventListener("click", onPieceClicked);
 }
 
 // Changes the turns between the white and black player
@@ -46,33 +16,27 @@ function changeTurn(color) {
   blacks = document.querySelectorAll(".black");
   whites = document.querySelectorAll(".white");
 
-  //Remove or add the unclickable class, depending on which color just played
+  // Depending ot the player that played we reset the pieces
   if (color === WHITE_PLAYER) {
     for (whitePiece of whites) {
-      whitePiece.classList.add("unclickable");
-      whitePiece.addEventListener("click", onPieceClicked);
+      disablePiece(whitePiece);
     }
 
     for (blackPiece of blacks) {
-      blackPiece.classList.remove("unclickable");
-      blackPiece.classList.add("active");
-      blackPiece.addEventListener("click", onPieceClicked);
+      activatePiece(blackPiece);
     }
   } else {
     for (whitePiece of whites) {
-      whitePiece.classList.remove("unclickable");
-      whitePiece.classList.add("active");
-      whitePiece.addEventListener("click", onPieceClicked);
+      activatePiece(whitePiece);
     }
 
     for (blackPiece of blacks) {
-      blackPiece.classList.add("unclickable");
-      blackPiece.addEventListener("click", onPieceClicked);
+      disablePiece(blackPiece);
     }
   }
 
   const oppositeColor = color === WHITE_PLAYER ? BLACK_PLAYER : WHITE_PLAYER;
-  const pieces = document.querySelectorAll(`.${oppositeColor}:not(.stuck)`);
+  const pieces = document.querySelectorAll(`.${oppositeColor}:not(.${STUCK})`);
 
   if (pieces.length === 0) {
     const winnerPopup = document.createElement("div");
@@ -91,16 +55,17 @@ function addImage(pieceHolder, player, name) {
   pieceHolder.appendChild(image);
 }
 
+// Return all possible moves that the piece can do
 function getPossibleMoves(color, row, cell) {
   const moves = [];
   const realRow = row + 1;
   const realCell = cell + 1;
 
   if (color === WHITE_PLAYER) {
+    // Gets the two potential moves
     const rightMove = document.querySelector(
       `tr:nth-of-type(${realRow + 1}) td:nth-of-type(${realCell + 1}) div`
     );
-
     const leftMove = document.querySelector(
       `tr:nth-of-type(${realRow + 1}) td:nth-of-type(${realCell - 1}) div`
     );
@@ -111,6 +76,7 @@ function getPossibleMoves(color, row, cell) {
         eat: { state: false, pos: null },
       });
     } else if (rightMove && rightMove.classList.contains(BLACK_PLAYER)) {
+      // potential is blocked and we check if we can eat
       const next = document.querySelector(
         `tr:nth-of-type(${realRow + 2}) td:nth-of-type(${realCell + 2}) div`
       );
@@ -131,6 +97,7 @@ function getPossibleMoves(color, row, cell) {
         eat: { state: false, pos: null },
       });
     } else if (leftMove && leftMove.classList.contains(BLACK_PLAYER)) {
+      // potential is blocked and we check if we can eat
       const next = document.querySelector(
         `tr:nth-of-type(${realRow + 2}) td:nth-of-type(${realCell - 2}) div`
       );
@@ -146,6 +113,7 @@ function getPossibleMoves(color, row, cell) {
       }
     }
   } else {
+    // Gets the two potential moves
     const rightMove = document.querySelector(
       `tr:nth-of-type(${realRow - 1}) td:nth-of-type(${realCell + 1}) div`
     );
@@ -160,6 +128,7 @@ function getPossibleMoves(color, row, cell) {
         eat: { state: false, pos: null },
       });
     } else if (rightMove && rightMove.classList.contains(WHITE_PLAYER)) {
+      // potential is blocked and we check if we can eat
       const next = document.querySelector(
         `tr:nth-of-type(${realRow - 2}) td:nth-of-type(${realCell + 2}) div`
       );
@@ -181,6 +150,7 @@ function getPossibleMoves(color, row, cell) {
         eat: { state: false, pos: null },
       });
     } else if (leftMove && leftMove.classList.contains(WHITE_PLAYER)) {
+      // potential is blocked and we check if we can eat
       const next = document.querySelector(
         `tr:nth-of-type(${realRow - 2}) td:nth-of-type(${realCell - 2}) div`
       );
@@ -197,7 +167,6 @@ function getPossibleMoves(color, row, cell) {
     }
   }
 
-  // Convert to boolean
   const isContainEat = moves.find((x) => x.eat.state === true);
 
   // If moves contain eat moves reutn only eat moves
@@ -209,14 +178,12 @@ function getPossibleMoves(color, row, cell) {
   return moves;
 }
 
+// Event handle for whhen player moved into the possible move given
 function onMoveEvent(posToMove, prevPosDiv, allMoves, color, eat) {
-  posToMove.target.classList.remove("possible-move");
-  posToMove.target.onclick = null;
-
   // Reset the previous div
-  resetPieceHolder(prevPosDiv);
+  emptyElement(prevPosDiv);
 
-  // Clean all moves
+  // Clean all visual of moves
   for (move of allMoves) {
     if (move.position.classList.contains("possible-move")) {
       move.position.classList.remove("possible-move");
@@ -224,33 +191,34 @@ function onMoveEvent(posToMove, prevPosDiv, allMoves, color, eat) {
     }
   }
 
-  // Remove the piece that was eaten
+  // If it is eat move we eat the piece
   if (eat.state) {
-    resetPieceHolder(eat.pos);
+    emptyElement(eat.pos);
   }
 
   const row = posToMove.path[1].rowIndex;
 
-  // Transform normal so queen
+  // If piece reached the end we mark it as stuck
   if (row === 0 || row === 7) {
-    addImage(posToMove.target.firstChild, color, PAWN);
-    posToMove.target.firstChild.classList.add(PAWN);
-    posToMove.target.firstChild.classList.add("stuck");
-  } else {
-    addImage(posToMove.target.firstChild, color, PAWN);
+    posToMove.target.firstChild.classList.add(STUCK);
   }
 
+  addImage(posToMove.target.firstChild, color, PAWN);
   posToMove.target.firstChild.classList.add(color);
   changeTurn(color);
 }
 
+// Event Handle for when a player press a piece
 function onPieceClicked(event) {
+  // highlight the piece to move
   event.target.classList.toggle("selected-piece");
 
+  // extract the player color
   const color = event.target.classList.contains(WHITE_PLAYER)
     ? WHITE_PLAYER
     : BLACK_PLAYER;
 
+  // we disable other piece except the one we playing
   if (color === WHITE_PLAYER) {
     whites = document.querySelectorAll(".white");
     for (whitePiece of whites) {
@@ -264,12 +232,13 @@ function onPieceClicked(event) {
   }
   event.target.classList.toggle("unclickable");
 
+  // Extract the current poistion of the piece
   let cell = event.path[1].cellIndex;
   let row = event.path[2].rowIndex;
 
-  // const isQueen = event.path[0].classList.contains(QUEEN);
   const moves = getPossibleMoves(color, row, cell);
 
+  // Register event for move cells
   for (move of moves) {
     // if true Clean prev moves
     // else show current moves
@@ -324,10 +293,6 @@ function createCheckersBoard() {
   }
 }
 
-function initGame() {
-  createCheckersBoard();
-}
-
 // Initializing Head + Intro
 window.addEventListener("load", (event) => {
   let head1 = document.createElement("h1");
@@ -342,7 +307,7 @@ window.addEventListener("load", (event) => {
 });
 
 // Initializing Board
-window.addEventListener("load", initGame);
+window.addEventListener("load", createCheckersBoard);
 
 // Credit
 window.addEventListener("load", (event) => {

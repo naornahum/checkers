@@ -22,10 +22,6 @@ table {
   user-select: none;
 }
 
-.selected {
-  background: limegreen;
-}
-
 .winner-dialog {
   position: absolute;
   left: 50%;
@@ -51,7 +47,6 @@ h3 {
   right: 45.5%;
 }
 
-/* *********************************************** */
 .active {
   cursor: pointer;
 }
