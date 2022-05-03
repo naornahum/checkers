@@ -119,7 +119,6 @@ function resetPieceHolder(div) {
 // Changes the turns between the white and black player
 function changeTurn(color) {
   blacks = document.querySelectorAll(".black");
-
   whites = document.querySelectorAll(".white");
 
   //Remove or add the disabled class, depending on which color just played
@@ -158,44 +157,46 @@ function addImageNew(pieceHolder, player, name) {
 
 function getPossibleMoves(color, row, cell) {
   const moves = [];
+  const realRow = row + 1;
+  const realCell = cell + 1;
 
   if (color === WHITE_PLAYER) {
-    const opt1 = document.querySelector(
-      `tr:nth-of-type(${row + 2}) td:nth-of-type(${cell}) div`
+    const rightMove = document.querySelector(
+      `tr:nth-of-type(${realRow + 1}) td:nth-of-type(${realCell + 1}) div`
     );
 
-    const opt2 = document.querySelector(
-      `tr:nth-of-type(${row + 2}) td:nth-of-type(${cell + 2}) div`
+    const leftMove = document.querySelector(
+      `tr:nth-of-type(${realRow + 1}) td:nth-of-type(${realCell - 1}) div`
     );
 
-    if (opt1 && isEmpty(opt1)) {
+    if (rightMove && isEmpty(rightMove)) {
       moves.push({
-        position: opt1.parentElement,
+        position: rightMove.parentElement,
         eat: { state: false, pos: null },
       });
-    } else if (opt1 && opt1.classList.contains(BLACK_PLAYER)) {
+    } else if (rightMove && rightMove.classList.contains(BLACK_PLAYER)) {
       const next = document.querySelector(
-        `tr:nth-of-type(${row + 3}) td:nth-of-type(${cell - 1}) div`
+        `tr:nth-of-type(${realRow + 2}) td:nth-of-type(${realCell + 2}) div`
       );
       if (next && isEmpty(next)) {
         moves.push({
           position: next.parentElement,
           eat: {
             state: true,
-            pos: opt1,
+            pos: rightMove,
           },
         });
       }
     }
 
-    if (opt2 && isEmpty(opt2)) {
+    if (leftMove && isEmpty(leftMove)) {
       moves.push({
-        position: opt2.parentElement,
+        position: leftMove.parentElement,
         eat: { state: false, pos: null },
       });
-    } else if (opt2 && opt2.classList.contains(BLACK_PLAYER)) {
+    } else if (leftMove && leftMove.classList.contains(BLACK_PLAYER)) {
       const next = document.querySelector(
-        `tr:nth-of-type(${row - 1}) td:nth-of-type(${cell + 3}) div`
+        `tr:nth-of-type(${realRow + 2}) td:nth-of-type(${realCell - 2}) div`
       );
 
       if (next && isEmpty(next)) {
@@ -203,28 +204,28 @@ function getPossibleMoves(color, row, cell) {
           position: next.parentElement,
           eat: {
             state: true,
-            pos: opt2,
+            pos: leftMove,
           },
         });
       }
     }
   } else {
-    const opt1 = document.querySelector(
-      `tr:nth-of-type(${row}) td:nth-of-type(${cell}) div`
+    const rightMove = document.querySelector(
+      `tr:nth-of-type(${realRow - 1}) td:nth-of-type(${realCell + 1}) div`
     );
 
-    const opt2 = document.querySelector(
-      `tr:nth-of-type(${row}) td:nth-of-type(${cell + 2}) div`
+    const leftMove = document.querySelector(
+      `tr:nth-of-type(${realRow - 1}) td:nth-of-type(${realCell - 1}) div`
     );
 
-    if (opt1 && isEmpty(opt1)) {
+    if (rightMove && isEmpty(rightMove)) {
       moves.push({
-        position: opt1.parentElement,
+        position: rightMove.parentElement,
         eat: { state: false, pos: null },
       });
-    } else if (opt1 && opt1.classList.contains(WHITE_PLAYER)) {
+    } else if (rightMove && rightMove.classList.contains(WHITE_PLAYER)) {
       const next = document.querySelector(
-        `tr:nth-of-type(${row - 1}) td:nth-of-type(${cell - 1}) div`
+        `tr:nth-of-type(${realRow - 2}) td:nth-of-type(${realCell + 2}) div`
       );
 
       if (isEmpty(next)) {
@@ -232,20 +233,20 @@ function getPossibleMoves(color, row, cell) {
           position: next.parentElement,
           eat: {
             state: true,
-            pos: opt1,
+            pos: rightMove,
           },
         });
       }
     }
 
-    if (opt2 && isEmpty(opt2)) {
+    if (leftMove && isEmpty(leftMove)) {
       moves.push({
-        position: opt2.parentElement,
+        position: leftMove.parentElement,
         eat: { state: false, pos: null },
       });
-    } else if (opt2 && opt2.classList.contains(WHITE_PLAYER)) {
+    } else if (leftMove && leftMove.classList.contains(WHITE_PLAYER)) {
       const next = document.querySelector(
-        `tr:nth-of-type(${row + 3}) td:nth-of-type(${cell + 3}) div`
+        `tr:nth-of-type(${realRow + 2}) td:nth-of-type(${realCell - 2}) div`
       );
 
       if (isEmpty(next)) {
@@ -253,7 +254,7 @@ function getPossibleMoves(color, row, cell) {
           position: next.parentElement,
           eat: {
             state: true,
-            pos: opt2,
+            pos: leftMove,
           },
         });
       }
