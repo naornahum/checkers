@@ -102,6 +102,7 @@ function createCheckersBoard(boardData) {
 
 // ************************************************************************************
 
+// Checkes if a cell is empty
 function isEmpty(div) {
   return (
     !div.classList.contains(BLACK_PLAYER) &&
@@ -109,17 +110,19 @@ function isEmpty(div) {
   );
 }
 
+// Delete the class from the cell => Removing a captured piece
 function resetPieceHolder(div) {
   div.classList.remove(...div.classList);
   div.innerHTML = "";
 }
 
+// Changes the turns between the white and black player
 function changeTurn(color) {
   blacks = document.querySelectorAll(".black");
 
   whites = document.querySelectorAll(".white");
 
-  //Remove or add the disabled class, depending on which color just played.
+  //Remove or add the disabled class, depending on which color just played
   if (color === WHITE_PLAYER) {
     for (whitePiece of whites) {
       whitePiece.classList.add("disabled");
@@ -145,6 +148,7 @@ function changeTurn(color) {
   }
 }
 
+// Adds the player images to the board
 function addImageNew(pieceHolder, player, name) {
   const image = document.createElement("img");
   image.src = "images/" + player + "/" + name + ".png";
@@ -173,7 +177,7 @@ function getPossibleMoves(color, row, cell) {
       const next = document.querySelector(
         `tr:nth-of-type(${row + 3}) td:nth-of-type(${cell - 1}) div`
       );
-      if (isEmpty(next)) {
+      if (next && isEmpty(next)) {
         moves.push({
           position: next.parentElement,
           eat: {
@@ -194,7 +198,7 @@ function getPossibleMoves(color, row, cell) {
         `tr:nth-of-type(${row - 1}) td:nth-of-type(${cell + 3}) div`
       );
 
-      if (isEmpty(next)) {
+      if (next && isEmpty(next)) {
         moves.push({
           position: next.parentElement,
           eat: {
@@ -325,6 +329,7 @@ function onPieceClicked(event) {
   }
 }
 
+// Creates empty checkers board HTML:
 function createCheckersBoardNew() {
   table = document.getElementById(CHECKERS_BOARD_ID);
 
@@ -368,7 +373,7 @@ function initGame() {
   createCheckersBoardNew();
 }
 
-// Head + Intro
+// Initializing Head + Intro
 window.addEventListener("load", (event) => {
   let head1 = document.createElement("h1");
   head1.textContent = "Checkers Game";
@@ -381,7 +386,7 @@ window.addEventListener("load", (event) => {
   Body2.appendChild(head2);
 });
 
-// Board
+// Initializing Board
 window.addEventListener("load", initGame);
 
 // Credit
