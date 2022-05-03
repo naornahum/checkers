@@ -246,7 +246,7 @@ function getPossibleMoves(color, row, cell) {
       });
     } else if (leftMove && leftMove.classList.contains(WHITE_PLAYER)) {
       const next = document.querySelector(
-        `tr:nth-of-type(${realRow + 2}) td:nth-of-type(${realCell - 2}) div`
+        `tr:nth-of-type(${realRow - 2}) td:nth-of-type(${realCell - 2}) div`
       );
 
       if (isEmpty(next)) {
@@ -283,6 +283,15 @@ function onMoveEvent(event, prevPos, otherOptions, color, eat) {
 
   if (eat.state) {
     resetPieceHolder(eat.pos);
+
+    const isWhite = color === WHITE_PLAYER;
+    pieces = document.querySelectorAll(
+      `.${isWhite ? BLACK_PLAYER : WHITE_PLAYER}`
+    );
+
+    if (pieces.length === 0) {
+      alert(`${color} WON!!!!`);
+    }
   }
 
   addImageNew(event.target.firstChild, color, PAWN);
