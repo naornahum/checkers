@@ -25,6 +25,8 @@ const PAWN = "pawn";
 const QUEEN = "queen";
 const CHECKERS_BOARD_ID = "checkers-board";
 
+let table;
+
 // Checkes if a cell is empty
 function isEmpty(div) {
   return (
@@ -68,6 +70,16 @@ function changeTurn(color) {
       blackPiece.addEventListener("click", onPieceClicked);
     }
   }
+
+  const oppositeColor = color === WHITE_PLAYER ? BLACK_PLAYER : WHITE_PLAYER;
+  const pieces = document.querySelectorAll(`.${oppositeColor}:not(.stuck)`);
+
+  if (pieces.length === 0) {
+    const winnerPopup = document.createElement("div");
+    winnerPopup.textContent = color + " player wins!";
+    winnerPopup.classList.add("winner-dialog");
+    table.appendChild(winnerPopup);
+  }
 }
 
 // Adds the player images to the board
@@ -83,34 +95,6 @@ function getPossibleMoves(color, row, cell) {
   const moves = [];
   const realRow = row + 1;
   const realCell = cell + 1;
-
-  // if (isQueen) {
-  //   for (direction of DIRECTIONS) {
-  //     let i = 1;
-  //     while (
-  //       realRow + i * direction.nextRow > 0 &&
-  //       realRow + i * direction.nextRow < 9 &&
-  //       realCell + i * direction.nextCell > 0 &&
-  //       realCell + i * direction.nextCell < 9
-  //     ) {
-  //       const cellToMove = document.querySelector(
-  //         `tr:nth-of-type(${realRow + i * direction.nextRow}) td:nth-of-type(${
-  //           realCell + i * direction.nextCell
-  //         }) div`
-  //       );
-  //       i++;
-
-  //       cellToMove &&
-  //         isEmpty(cellToMove) &&
-  //         moves.push({
-  //           position: cellToMove.parentElement,
-  //           eat: { state: false, pos: null },
-  //         });
-  //     }
-  //   }
-
-  //   return moves;
-  // }
 
   if (color === WHITE_PLAYER) {
     const rightMove = document.querySelector(
@@ -180,7 +164,7 @@ function getPossibleMoves(color, row, cell) {
         `tr:nth-of-type(${realRow - 2}) td:nth-of-type(${realCell + 2}) div`
       );
 
-      if (isEmpty(next)) {
+      if (next && isEmpty(next)) {
         moves.push({
           position: next.parentElement,
           eat: {
@@ -201,7 +185,7 @@ function getPossibleMoves(color, row, cell) {
         `tr:nth-of-type(${realRow - 2}) td:nth-of-type(${realCell - 2}) div`
       );
 
-      if (isEmpty(next)) {
+      if (next && isEmpty(next)) {
         moves.push({
           position: next.parentElement,
           eat: {
@@ -240,29 +224,21 @@ function onMoveEvent(posToMove, prevPosDiv, allMoves, color, eat) {
     }
   }
 
+  // Remove the piece that was eaten
   if (eat.state) {
     resetPieceHolder(eat.pos);
-    const isWhite = color === WHITE_PLAYER;
-    pieces = document.querySelectorAll(
-      `.${isWhite ? BLACK_PLAYER : WHITE_PLAYER}`
-    );
-
-    if (pieces.length === 0) {
-      alert(`${color} WON!!!!`);
-    }
   }
 
   const row = posToMove.path[1].rowIndex;
 
   // Transform normal so queen
-  // if (row === 0 || row === 7) {
-  //   addImage(posToMove.target.firstChild, color, QUEEN);
-  //   posToMove.target.firstChild.classList.add(QUEEN);
-  // } else {
-  //   addImage(posToMove.target.firstChild, color, PAWN);
-  // }
-
-  addImage(posToMove.target.firstChild, color, PAWN);
+  if (row === 0 || row === 7) {
+    addImage(posToMove.target.firstChild, color, PAWN);
+    posToMove.target.firstChild.classList.add(PAWN);
+    posToMove.target.firstChild.classList.add("stuck");
+  } else {
+    addImage(posToMove.target.firstChild, color, PAWN);
+  }
 
   posToMove.target.firstChild.classList.add(color);
   changeTurn(color);
@@ -292,7 +268,7 @@ function onPieceClicked(event) {
   let row = event.path[2].rowIndex;
 
   // const isQueen = event.path[0].classList.contains(QUEEN);
-  const moves = getPossibleMoves(color, row, cell, isQueen);
+  const moves = getPossibleMoves(color, row, cell);
 
   for (move of moves) {
     // if true Clean prev moves
@@ -311,7 +287,7 @@ function onPieceClicked(event) {
 
 // Creates empty checkers board HTML:
 function createCheckersBoard() {
-  let table = document.getElementById(CHECKERS_BOARD_ID);
+  table = document.getElementById(CHECKERS_BOARD_ID);
 
   // Create empty checkers board HTML:
   table = document.createElement("table");
@@ -332,8 +308,8 @@ function createCheckersBoard() {
   }
 
   // Select the 3 bottom rows and top 3 raw to init withe piecs
-  let whiteDivs = document.querySelectorAll("tr:nth-child(-n+1) div");
-  let blackDivs = document.querySelectorAll("tr:nth-child(n+8) div");
+  let whiteDivs = document.querySelectorAll("tr:nth-child(-n+3) div");
+  let blackDivs = document.querySelectorAll("tr:nth-child(n+6) div");
 
   for (whitePiece of whiteDivs) {
     addImage(whitePiece, WHITE_PLAYER, PAWN);
